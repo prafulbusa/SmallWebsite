@@ -1,0 +1,27 @@
+﻿@model WebSite.Models.PageBModel
+@{
+    ViewBag.Title = "Page B";
+}
+
+<h2>Page B</h2>
+
+<h2>View</h2>
+
+<div>
+    <h4>PageBModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Code)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Code)
+        </dd>
+
+    </dl>
+</div>
+<p>
+   @*@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@
