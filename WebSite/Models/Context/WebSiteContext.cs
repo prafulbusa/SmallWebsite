@@ -13,7 +13,7 @@ namespace Models.Context
         public WebSiteContext()
             : base("name=WebSiteDB")
         {
-            Database.SetInitializer<WebSiteContext>(null);
+
         }
 
         public virtual DbSet<Message> Messages { get; set; }

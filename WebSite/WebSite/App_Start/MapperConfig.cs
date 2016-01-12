@@ -14,10 +14,13 @@ namespace WebSite.App_Start
         public static void RegisterMappings()
         {
             Mapper.CreateMap<Message, MessageViewModel>();
-                //.ForMember(model => model.RegularImages,
-                //    expression => expression.ResolveUsing<RecipeRegularImagesUrlResolver>())
-                //.ForMember(model => model.RecipeImageUrl,
-                //    expression => expression.ResolveUsing<RecipeImageUrlResolver>());
+            Mapper.CreateMap<Message, PageBModel>()                
+                .ForMember(mes => mes.Code, expression => expression.MapFrom(model => model.Code))
+                .ForMember(mes => mes.MessageBody, expression => expression.MapFrom(model => model.MessageBody));
+            Mapper.CreateMap<PageBModel, Message>()
+                .ForMember(mes => mes.MessageId, option => option.Ignore())
+                .ForMember(pageB => pageB.Code, expression => expression.MapFrom(model => model.Code))
+                .ForMember(pageB => pageB.MessageBody, expression => expression.MapFrom(model => model.MessageBody));
 
         }
     }

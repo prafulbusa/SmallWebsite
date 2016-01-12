@@ -15,6 +15,7 @@ namespace WebSite.Context
 
         public DbContext GetDbContext()
         {
+            
             return wsContext;
         }
     }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Models.Domain
 {
-    [Table("Messages")]
     public partial class Message
     {
         public Message()
@@ -23,5 +22,5 @@ namespace Models.Domain
         [Required]
         public string MessageBody { get; set; }
 
-    }
+   }
 }

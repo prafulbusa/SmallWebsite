@@ -19,7 +19,7 @@ namespace Repositories.Concrete
 
         public Message GetByCode(string code)
         {
-            return Query().FirstOrDefault(x => !x.Code.Equals(code));
+            return Query().FirstOrDefault(x => x.Code.Equals(code));
         }
     }
 }

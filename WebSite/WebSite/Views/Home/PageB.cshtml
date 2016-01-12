@@ -4,24 +4,99 @@
 }
 
 <h2>Page B</h2>
-
-<h2>View</h2>
-
-<div>
-    <h4>PageBModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Code)
-        </dd>
-
-    </dl>
+<style>
+    .white-popup-block {
+        background: #fff none repeat scroll 0 0;
+        margin: 40px auto;
+        max-width: 650px;
+        padding: 20px 30px;
+        position: relative;
+        text-align: left;
+    }
+</style>
+<div id="pageBMessage">
+    @Html.Partial("PageBMessage", Model)
 </div>
-<p>
-   @*@section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-    }*@
+
+<div class="html-code">
+    @*<a class="popup-with-form" href="#test-form">Open form</a>*@
+    <button class="popup-with-form" href="#sendmessage">Send Message</button>
+
+    <form id="sendmessage" class="white-popup-block mfp-hide">
+        <h1>Send Message</h1>
+        <fieldset style="border:0;">
+            <ul>
+                @*<li>
+                        <label for="name">Name</label>
+                        <input id="name" name="name" placeholder="Name" required="" type="text">
+                    </li>
+                    <li>
+                        <label for="email">Email</label>
+                        <input id="email" name="email" placeholder="example@domain.com" required="" type="email">
+                    </li>
+                    <li>
+                        <label for="phone">Phone</label>
+                        <input id="phone" name="phone" placeholder="Eg. +447500000000" required="" type="tel">
+                    </li>*@
+                <li>
+                    <label for="messageBody">Message</label><br>
+                    <textarea id="messageBody" required=""></textarea>
+                </li>
+                <li>
+                    <button id="SendMessageSubmit" type="submit" value="Send">Send</button>
+                    <button type="button" class="popup-modal-dismiss" href="#">Dismiss</button>
+                </li>
+            </ul>
+        </fieldset>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.popup-with-form').magnificPopup({
+            type: 'inline',
+            preloader: false,
+            focus: '#messageBody',
+
+            callbacks: {
+                beforeOpen: function () {
+                    if ($(window).width() < 700) {
+                        this.st.focus = false;
+                    } else {
+                        this.st.focus = '#messageBody';
+                    }
+                }
+            }
+        });
+        $(document).on('click', '.popup-modal-dismiss', function (e) {
+            e.preventDefault();
+            $.magnificPopup.close();
+            $('form')[0].reset();
+        });
+        $(document).on('click', '#SendMessageSubmit', function (e) {
+            e.preventDefault();
+            $.magnificPopup.close();
+            $('form')[0].reset();
+        });
+        $('#SendMessageSubmit').click(function () {
+            var message = $("#messageBody").val();
+            $.ajax({
+                url: '/Home/SendMessage',
+                type: 'POST',
+                data:
+                    {
+                        'MessageBody': message,
+                        'Code': @Model.Code
+                    },
+                success: function (result) {
+                    $.magnificPopup.close();
+                    $('form')[0].reset();
+                    $('#pageBMessage').html(result);
+                }
+            });
+            return false;
+        });
+    });
+
+</script>

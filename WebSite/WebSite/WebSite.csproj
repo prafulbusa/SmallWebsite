@@ -150,6 +150,9 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="magnific-popup\jquery.magnific-popup.js" />
+    <Content Include="magnific-popup\jquery.magnific-popup.min.js" />
+    <Content Include="magnific-popup\magnific-popup.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -178,8 +181,7 @@
     <Content Include="Views\Home\PageA.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Home\PageB.cshtml" />
-    <Content Include="Views\Home\View.cshtml" />
-    <Content Include="Views\Home\View1.cshtml" />
+    <Content Include="Views\Home\PageBMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
