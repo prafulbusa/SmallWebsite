@@ -6,14 +6,15 @@ using System.Web;
 
 namespace WebSite.Models
 {
-    public class MessageViewModel
+    public class PageBViewModel
     {
-        public int MessageId { get; set; }
 
-        [Required]
         public string Code { get; set; }
 
-        [Required]
         public string MessageBody { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime UpdatedDate { get; set; }
     }
 }

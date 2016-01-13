@@ -13,14 +13,9 @@ namespace WebSite.App_Start
     {
         public static void RegisterMappings()
         {
-            Mapper.CreateMap<Message, MessageViewModel>();
-            Mapper.CreateMap<Message, PageBModel>()                
-                .ForMember(mes => mes.Code, expression => expression.MapFrom(model => model.Code))
-                .ForMember(mes => mes.MessageBody, expression => expression.MapFrom(model => model.MessageBody));
-            Mapper.CreateMap<PageBModel, Message>()
-                .ForMember(mes => mes.MessageId, option => option.Ignore())
-                .ForMember(pageB => pageB.Code, expression => expression.MapFrom(model => model.Code))
-                .ForMember(pageB => pageB.MessageBody, expression => expression.MapFrom(model => model.MessageBody));
+            Mapper.CreateMap<Message, PageBViewModel>();
+            Mapper.CreateMap<Message, SendMessageModel>();                
+            Mapper.CreateMap<SendMessageModel, Message>();
 
         }
     }

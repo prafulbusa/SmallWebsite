@@ -4,9 +4,11 @@ using ServicesFacade.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebSite.Models;
+using WebSite.Tools;
 
 namespace WebSite.Controllers
 {
@@ -42,34 +44,58 @@ namespace WebSite.Controllers
             }
 
             var message = _messageService.GetByCode(code);
-            PageBModel model;
+            PageBViewModel model;
             if (message != null)
             {
-                model = Mapper.Map<Message, PageBModel>(message);
+                model = Mapper.Map<Message, PageBViewModel>(message);
             }
             else
             {
-                model = new PageBModel { Code = code };
+                model = new PageBViewModel { Code = code };
             }           
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult SendMessage(PageBModel pageBModel)
+        public ActionResult SendMessage(SendMessageModel sendMessageModel)
         {
             if (ModelState.IsValid)
             {
-                var message = Mapper.Map<PageBModel, Message>(pageBModel);
-                //product.CreatedBy = WebSecurity.CurrentUserName;
-                //product.CreatedOn = DateTime.Now;
-                var result = _messageService.Create(message);
-                var model = Mapper.Map<Message, PageBModel>(result);
+                var message = _messageService.GetByCode(sendMessageModel.Code);
+                Message result;
+                if (message != null)
+                {
+                    message.MessageBody = sendMessageModel.MessageBody;
+                    message.UpdatedDate = DateTime.UtcNow;
+                    result = _messageService.Update(message);
+                }
+                else
+                {
+                    message = Mapper.Map<SendMessageModel, Message>(sendMessageModel);
+                    message.CreatedDate = DateTime.UtcNow;
+                    message.UpdatedDate = DateTime.UtcNow;
+                    result = _messageService.Create(message);
+                }
                 _messageService.SaveChanges();
-                return PartialView("PageBMessage", pageBModel); 
+                var viewModel = Mapper.Map<Message, PageBViewModel>(result);
+
+                return PartialView("PageBMessage", viewModel); 
             }
-            return View(pageBModel);
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Validation Error");
         }
 
+
+        [HttpPost]
+        public ActionResult SendEmailMessage(SendEmailMessageModel sendMessageModel)
+        {
+            if (ModelState.IsValid)
+            {               
+                MailSender.SendMail(sendMessageModel.Email, sendMessageModel.Subject, sendMessageModel.MessageEmail);
+
+                return RedirectToAction("PageA");
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Validation Error");
+        }
     }
 }

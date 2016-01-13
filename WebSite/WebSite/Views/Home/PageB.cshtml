@@ -1,60 +1,59 @@
-﻿@model WebSite.Models.PageBModel
+﻿@model WebSite.Models.PageBViewModel
 @{
     ViewBag.Title = "Page B";
 }
 
 <h2>Page B</h2>
-<style>
-    .white-popup-block {
-        background: #fff none repeat scroll 0 0;
-        margin: 40px auto;
-        max-width: 650px;
-        padding: 20px 30px;
-        position: relative;
-        text-align: left;
-    }
-</style>
+
 <div id="pageBMessage">
     @Html.Partial("PageBMessage", Model)
 </div>
 
 <div class="html-code">
-    @*<a class="popup-with-form" href="#test-form">Open form</a>*@
-    <button class="popup-with-form" href="#sendmessage">Send Message</button>
+    <button class="popup-send-message" href="#sendmessage">Send Message</button>
+    <button class="popup-send-email-message" href="#sendemail">Send Email Message</button>
 
     <form id="sendmessage" class="white-popup-block mfp-hide">
         <h1>Send Message</h1>
         <fieldset style="border:0;">
-            <ul>
-                @*<li>
-                        <label for="name">Name</label>
-                        <input id="name" name="name" placeholder="Name" required="" type="text">
-                    </li>
-                    <li>
-                        <label for="email">Email</label>
-                        <input id="email" name="email" placeholder="example@domain.com" required="" type="email">
-                    </li>
-                    <li>
-                        <label for="phone">Phone</label>
-                        <input id="phone" name="phone" placeholder="Eg. +447500000000" required="" type="tel">
-                    </li>*@
-                <li>
-                    <label for="messageBody">Message</label><br>
-                    <textarea id="messageBody" required=""></textarea>
-                </li>
-                <li>
-                    <button id="SendMessageSubmit" type="submit" value="Send">Send</button>
-                    <button type="button" class="popup-modal-dismiss" href="#">Dismiss</button>
-                </li>
-            </ul>
+            <div>
+                <label for="messageBody">Message</label><br>
+                <textarea id="messageBody" required=""></textarea>
+            </div>
+            <div>
+                <button type="submit" value="Send">Send</button>
+                <button type="button" class="popup-modal-dismiss" href="#">Dismiss</button>
+            </div>
+        </fieldset>
+    </form>
+
+    <form id="sendemail" class="white-popup-block mfp-hide">
+        <h1>Send Email Message</h1>
+        <fieldset style="border:0;">
+            <div>
+                <label for="email">Email</label>
+                <input id="email" name="email" placeholder="example@domain.com" required="" type="email">
+            </div>
+            <div>
+                <label for="subject">Subject</label>
+                <input id="subject" name="subject" placeholder="Subject" required="" type="text">
+            </div>
+
+            <div>
+                <label for="messageEmail">Message</label><br>
+                <textarea id="messageEmail" required=""></textarea>
+            </div>
+            <div>
+                <button type="submit" value="Send">Send</button>
+                <button type="button" class="popup-modal-dismiss" href="#">Dismiss</button>
+            </div>
         </fieldset>
     </form>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.popup-with-form').magnificPopup({
+        $('.popup-send-message').magnificPopup({
             type: 'inline',
             preloader: false,
             focus: '#messageBody',
@@ -69,18 +68,31 @@
                 }
             }
         });
+
+        $('.popup-send-email-message').magnificPopup({
+            type: 'inline',
+            preloader: false,
+            focus: '#email',
+
+            callbacks: {
+                beforeOpen: function () {
+                    if ($(window).width() < 700) {
+                        this.st.focus = false;
+                    } else {
+                        this.st.focus = '#email';
+                    }
+                }
+            }
+        });
+
         $(document).on('click', '.popup-modal-dismiss', function (e) {
             e.preventDefault();
             $.magnificPopup.close();
             $('form')[0].reset();
         });
-        $(document).on('click', '#SendMessageSubmit', function (e) {
-            e.preventDefault();
-            $.magnificPopup.close();
-            $('form')[0].reset();
-        });
-        $('#SendMessageSubmit').click(function () {
-            var message = $("#messageBody").val();
+
+        $("#sendmessage").submit(function (event) {
+            var message = $("#messageBody").val(); 
             $.ajax({
                 url: '/Home/SendMessage',
                 type: 'POST',
@@ -93,10 +105,38 @@
                     $.magnificPopup.close();
                     $('form')[0].reset();
                     $('#pageBMessage').html(result);
+                },
+                error: function (jqXHR, exception) {
+                    
                 }
             });
-            return false;
+            event.preventDefault();
         });
+
+        $("#sendemail").submit(function (event) {
+            $.ajax({
+                url: '/Home/SendEmailMessage',
+                type: 'POST',
+                data:
+                    {
+                        'Email': $("#email").val(),
+                        'MessageEmail': $("#messageEmail").val(),
+                        'Subject': $("#subject").val()
+                    },
+                success: function (result) {
+                    $.magnificPopup.close();
+                    $('form')[0].reset();
+                },
+                error: function (jqXHR, exception) {
+                    
+                }
+            });
+            event.preventDefault();
+        });
+
     });
 
 </script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

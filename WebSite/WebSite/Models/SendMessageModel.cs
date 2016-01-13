@@ -6,10 +6,12 @@ using System.Web;
 
 namespace WebSite.Models
 {
-    public class PageBModel
+    public class SendMessageModel
     {
+        [Required]
         public string Code { get; set; }
 
+        [Required]
         public string MessageBody { get; set; }
     }
 }

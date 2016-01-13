@@ -1,4 +1,4 @@
-﻿@model WebSite.Models.PageBModel
+﻿@model WebSite.Models.PageBViewModel
 
 <h4>PageBModel</h4>
 <hr />
@@ -12,6 +12,18 @@
     </dd>
 
 </dl>
+
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.UpdatedDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.UpdatedDate)
+    </dd>
+
+</dl>
+
 <dl class="dl-horizontal">
     <dt>
         @Html.DisplayNameFor(model => model.MessageBody)
@@ -22,3 +34,4 @@
     </dd>
 
 </dl>
+

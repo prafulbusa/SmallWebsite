@@ -22,5 +22,9 @@ namespace Models.Domain
         [Required]
         public string MessageBody { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime UpdatedDate { get; set; }
+
    }
 }
