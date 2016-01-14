@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Interfaces;
 using Models.Domain;
 using ServicesFacade.Concrete;
 using System;
@@ -8,17 +9,18 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebSite.Models;
-using WebSite.Tools;
 
 namespace WebSite.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IMessageService _messageService;
-        
-        public HomeController(IMessageService messageService)
+        private readonly IEmailSender _emailSender;
+
+        public HomeController(IMessageService messageService, IEmailSender emailSender)
         {
             _messageService = messageService;
+            _emailSender = emailSender;
         }
 
         public ActionResult PageA()
@@ -62,25 +64,32 @@ namespace WebSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                var message = _messageService.GetByCode(sendMessageModel.Code);
-                Message result;
-                if (message != null)
+                try
                 {
-                    message.MessageBody = sendMessageModel.MessageBody;
-                    message.UpdatedDate = DateTime.UtcNow;
-                    result = _messageService.Update(message);
-                }
-                else
-                {
-                    message = Mapper.Map<SendMessageModel, Message>(sendMessageModel);
-                    message.CreatedDate = DateTime.UtcNow;
-                    message.UpdatedDate = DateTime.UtcNow;
-                    result = _messageService.Create(message);
-                }
-                _messageService.SaveChanges();
-                var viewModel = Mapper.Map<Message, PageBViewModel>(result);
+                    var message = _messageService.GetByCode(sendMessageModel.Code);
+                    Message result;
+                    if (message != null)
+                    {
+                        message.MessageBody = sendMessageModel.MessageBody;
+                        message.UpdatedDate = DateTime.UtcNow;
+                        result = _messageService.Update(message);
+                    }
+                    else
+                    {
+                        message = Mapper.Map<SendMessageModel, Message>(sendMessageModel);
+                        message.CreatedDate = DateTime.UtcNow;
+                        message.UpdatedDate = DateTime.UtcNow;
+                        result = _messageService.Create(message);
+                    }
+                    _messageService.SaveChanges();
+                    var viewModel = Mapper.Map<Message, PageBViewModel>(result);
 
-                return PartialView("PageBMessage", viewModel); 
+                    return PartialView("PageBMessage", viewModel);
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, ex.Message);
+                }
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Validation Error");
         }
@@ -90,10 +99,16 @@ namespace WebSite.Controllers
         public ActionResult SendEmailMessage(SendEmailMessageModel sendMessageModel)
         {
             if (ModelState.IsValid)
-            {               
-                MailSender.SendMail(sendMessageModel.Email, sendMessageModel.Subject, sendMessageModel.MessageEmail);
-
-                return RedirectToAction("PageA");
+            {
+                try
+                {
+                    _emailSender.SendMail(sendMessageModel.Email, sendMessageModel.Subject, sendMessageModel.MessageEmail);
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+                }
+                catch (Exception ex)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, ex.Message);
+                }   
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Validation Error");
         }

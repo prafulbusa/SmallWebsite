@@ -13,12 +13,13 @@
     <button class="popup-send-message" href="#sendmessage">Send Message</button>
     <button class="popup-send-email-message" href="#sendemail">Send Email Message</button>
 
-    <form id="sendmessage" class="white-popup-block mfp-hide">
+    <form id="sendmessage" action="/Home/SendMessage" method="post" class="white-popup-block mfp-hide">
         <h1>Send Message</h1>
         <fieldset style="border:0;">
+            <input type="hidden" name="Code" value=@Model.Code>
             <div>
-                <label for="messageBody">Message</label><br>
-                <textarea id="messageBody" required=""></textarea>
+                <label for="messagebody">Message</label><br>
+                <textarea id="messageBody" name="MessageBody" required=""></textarea>
             </div>
             <div>
                 <button type="submit" value="Send">Send</button>
@@ -27,21 +28,21 @@
         </fieldset>
     </form>
 
-    <form id="sendemail" class="white-popup-block mfp-hide">
+    <form id="sendemail" action="/Home/SendEmailMessage" method="post" class="white-popup-block mfp-hide">
         <h1>Send Email Message</h1>
         <fieldset style="border:0;">
             <div>
                 <label for="email">Email</label>
-                <input id="email" name="email" placeholder="example@domain.com" required="" type="email">
+                <input id="email" name="Email" placeholder="example@domain.com" required="" type="email">
             </div>
             <div>
                 <label for="subject">Subject</label>
-                <input id="subject" name="subject" placeholder="Subject" required="" type="text">
+                <input id="subject" name="Subject" placeholder="Subject" required="" type="text">
             </div>
 
             <div>
                 <label for="messageEmail">Message</label><br>
-                <textarea id="messageEmail" required=""></textarea>
+                <textarea id="messageEmail" name="MessageEmail" required=""></textarea>
             </div>
             <div>
                 <button type="submit" value="Send">Send</button>
@@ -51,92 +52,7 @@
     </form>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('.popup-send-message').magnificPopup({
-            type: 'inline',
-            preloader: false,
-            focus: '#messageBody',
-
-            callbacks: {
-                beforeOpen: function () {
-                    if ($(window).width() < 700) {
-                        this.st.focus = false;
-                    } else {
-                        this.st.focus = '#messageBody';
-                    }
-                }
-            }
-        });
-
-        $('.popup-send-email-message').magnificPopup({
-            type: 'inline',
-            preloader: false,
-            focus: '#email',
-
-            callbacks: {
-                beforeOpen: function () {
-                    if ($(window).width() < 700) {
-                        this.st.focus = false;
-                    } else {
-                        this.st.focus = '#email';
-                    }
-                }
-            }
-        });
-
-        $(document).on('click', '.popup-modal-dismiss', function (e) {
-            e.preventDefault();
-            $.magnificPopup.close();
-            $('form')[0].reset();
-        });
-
-        $("#sendmessage").submit(function (event) {
-            var message = $("#messageBody").val(); 
-            $.ajax({
-                url: '/Home/SendMessage',
-                type: 'POST',
-                data:
-                    {
-                        'MessageBody': message,
-                        'Code': @Model.Code
-                    },
-                success: function (result) {
-                    $.magnificPopup.close();
-                    $('form')[0].reset();
-                    $('#pageBMessage').html(result);
-                },
-                error: function (jqXHR, exception) {
-                    
-                }
-            });
-            event.preventDefault();
-        });
-
-        $("#sendemail").submit(function (event) {
-            $.ajax({
-                url: '/Home/SendEmailMessage',
-                type: 'POST',
-                data:
-                    {
-                        'Email': $("#email").val(),
-                        'MessageEmail': $("#messageEmail").val(),
-                        'Subject': $("#subject").val()
-                    },
-                success: function (result) {
-                    $.magnificPopup.close();
-                    $('form')[0].reset();
-                },
-                error: function (jqXHR, exception) {
-                    
-                }
-            });
-            event.preventDefault();
-        });
-
-    });
-
-</script>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/pageB.js"></script>
 }

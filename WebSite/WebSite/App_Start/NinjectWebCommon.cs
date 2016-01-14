@@ -17,6 +17,10 @@ namespace WebSite.App_Start
     using ServicesFacade.Concrete;
     using Services.Concrete;
     using Repositories;
+    using Interfaces;
+    using AdditionalServices;
+    using System.Net.Configuration;
+    using System.Configuration;
 
     public static class NinjectWebCommon 
     {
@@ -72,6 +76,7 @@ namespace WebSite.App_Start
             kernel.Bind<IMessageRepository>().To<MessageRepository>();
             
             kernel.Bind<IMessageService>().To<MessageService>();
+            kernel.Bind<IEmailSender>().To<EmailSender>().WithConstructorArgument<SmtpSection>(ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection);
 
             kernel.Bind(typeof(IRepository<>))
                 .To(typeof(Repository<>))
